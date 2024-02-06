@@ -12,7 +12,7 @@ Vue.component('notes', {
     methods: {
         addCard(column) {
             if (!this.column1Locked && column.cards.length < this.getMaxCards(column.id)) {
-                const newCard = {title: 'Новая карточка', items: [], columnId: column.id};
+                const newCard = { title: 'Новая карточка', items: [], columnId: column.id };
                 column.cards.push(newCard);
 
                 if (column.id === 1) {
@@ -35,7 +35,7 @@ Vue.component('notes', {
         },
         addItem(card) {
             if (card.items.length < 5) {
-                card.items.push({text: 'Новый пункт', completed: false});
+                card.items.push({ text: 'Новый пункт', completed: false });
             }
         },
         removeItem(card, itemIndex) {
@@ -51,6 +51,27 @@ Vue.component('notes', {
                 toColumn.cards.push(card);
             }
         },
+        moveCardIfCompleted(card) {
+            if (card.columnId === 1) {
+                const completedCount = card.items.filter(item => item.completed).length;
+                const totalCount = card.items.length;
+                if (completedCount / totalCount > 0.5 && this.columns[1].cards.length < this.getMaxCards(2)) {
+                    this.moveCard(card, 1, 2);
+                }
+                if (completedCount === totalCount) {
+                    this.moveCard(card, 1, 3);
+                    card.completedAt = new Date().toLocaleString();
+                }
+            } else if (card.columnId === 2) {
+                const completedCount = card.items.filter(item => item.completed).length;
+                const totalCount = card.items.length;
+                if (completedCount === totalCount) {
+                    this.moveCard(card, 2, 3);
+                    card.completedAt = new Date().toLocaleString();
+                }
+            }
+        },
+
     },
     template: `
     <div class="kanban-board">
