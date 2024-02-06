@@ -71,7 +71,26 @@ Vue.component('notes', {
                 }
             }
         },
-
+        isCardLocked(card) {
+            if (card.columnId === 1 && this.columns[1].cards.length === this.getMaxCards(2)) {
+                const completedCount = card.items.filter(item => item.completed).length;
+                const totalCount = card.items.length;
+                return completedCount / totalCount > 0.5;
+            }
+            return false;
+        },
+        saveToLocalStorage() {
+            localStorage.setItem('columns', JSON.stringify(this.columns));
+        },
+    },
+    watch: {
+        columns: {
+            handler() {
+                this.column1Locked = this.isColumn1Locked();
+                this.saveToLocalStorage();
+            },
+            deep: true,
+        },
     },
     template: `
     <div class="kanban-board">
