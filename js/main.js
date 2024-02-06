@@ -113,7 +113,15 @@ Vue.component('notes', {
       </div>
     </div>
   `,
-
+    created() {
+        const storedColumns = localStorage.getItem('columns');
+        if (storedColumns) {
+            this.columns = JSON.parse(storedColumns);
+        }
+    },
+    beforeUpdate() {
+        this.saveToLocalStorage();
+    },
 });
 
 new Vue({
